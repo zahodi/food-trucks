@@ -11,33 +11,9 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type FoodTruck struct {
-	LocationID     string `json:"locationid"`
-	Applicant      string `json:"applicant"`
-	FacilityType   string `json:"facilitytype"`
-	Cnn            string `json:"cnn"`
-	LocationDesc   string `json:"locationdesc"`
-	Address        string `json:"address"`
-	BlockLot       string `json:"blocklot"`
-	Block          string `json:"block"`
-	Lot            string `json:"lot"`
-	Permit         string `json:"permit"`
-	Status         string `json:"status"`
-	FoodItems      string `json:"fooditems"`
-	Latitude       string `json:"latitude"`
-	Longitude      string `json:"longitude"`
-	Schedule       string `json:"schedule"`
-	DaysHours      string `json:"dayshours"`
-	NOISent        string `json:"noisent"`
-	Approved       string `json:"approved"`
-	Received       string `json:"received"`
-	PriorPermit    string `json:"priorpermit"`
-	ExpirationDate string `json:"expirationdate"`
-}
+var foodTrucks []map[string]string
 
-var foodTrucks []FoodTruck
-
-func loadCSV(filePath string) ([]FoodTruck, error) {
+func loadCSV(filePath string) ([]map[string]string, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return nil, err
@@ -50,34 +26,18 @@ func loadCSV(filePath string) ([]FoodTruck, error) {
 		return nil, err
 	}
 
-	var foodTrucks []FoodTruck
-	for _, record := range records[1:] {
-		// Print FoodItems column for debugging
-		fmt.Println("FoodItems:", record[7])
+	if len(records) == 0 {
+		return nil, fmt.Errorf("CSV file is empty")
+	}
 
-		foodTrucks = append(foodTrucks, FoodTruck{
-			LocationID:     record[0],
-			Applicant:      record[1],
-			FacilityType:   record[2],
-			Cnn:            record[3],
-			LocationDesc:   record[4],
-			Address:        record[5],
-			BlockLot:       record[6],
-			Block:          record[7],
-			Lot:            record[8],
-			Permit:         record[6],
-			Status:         record[7],
-			NOISent:        record[8],
-			Latitude:       record[9],
-			Longitude:      record[10],
-			Schedule:       record[11],
-			FoodItems:      record[11],
-			DaysHours:      record[12],
-			Approved:       record[13],
-			Received:       record[14],
-			PriorPermit:    record[15],
-			ExpirationDate: record[16],
-		})
+	headers := records[0]
+	var foodTrucks []map[string]string
+	for _, record := range records[1:] {
+		foodTruck := make(map[string]string)
+		for i, header := range headers {
+			foodTruck[header] = record[i]
+		}
+		foodTrucks = append(foodTrucks, foodTruck)
 	}
 
 	return foodTrucks, nil
@@ -96,16 +56,23 @@ func searchFoodTrucks(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var result []FoodTruck
+	uniqueApplicants := make(map[string]bool)
+	// var result []map[string]string
+	var result []string
+
 	for _, truck := range foodTrucks {
-		if strings.Contains(strings.ToLower(truck.FoodItems), strings.ToLower(query)) {
-			result = append(result, truck)
+		foodItems := truck["FoodItems"] // or use the dynamic column name if it's different
+		if strings.Contains(strings.ToLower(foodItems), strings.ToLower(query)) {
+			applicant := truck["Applicant"] // or use the dynamic column name if it's different
+			if _, exists := uniqueApplicants[applicant]; !exists {
+				uniqueApplicants[applicant] = true
+				result = append(result, truck["Applicant"])
+			}
 		}
 	}
 
 	if len(result) == 0 {
 		fmt.Println("No results found for query:", query)
-		fmt.Println(foodTrucks[1])
 	} else {
 		fmt.Println("Results found for query:", query)
 	}
