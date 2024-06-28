@@ -4,7 +4,7 @@ This Go project serves an API that provides information about food trucks in San
 
 ## Features
 
-- Fetch data from a remote CSV file.
+- Fetch data from a remote CSV file. Local copy is provider in the repo as well.
 - Serve data as JSON over HTTP.
 - Search food trucks by food items.
 - Ensure unique results based on food truck names.
