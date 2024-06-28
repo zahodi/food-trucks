@@ -41,4 +41,5 @@ go run main.go
 Access the API:
 
 List all food trucks: http://localhost:8000/foodtrucks
+
 Search food trucks by food type: http://localhost:8000/foodtrucks/search?food=burger
