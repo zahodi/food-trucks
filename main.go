@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"os"
 	"strings"
 
 	"github.com/gorilla/mux"
@@ -13,14 +12,18 @@ import (
 
 var foodTrucks []map[string]string
 
-func loadCSV(filePath string) ([]map[string]string, error) {
-	file, err := os.Open(filePath)
+func loadCSVFromURL(url string) ([]map[string]string, error) {
+	resp, err := http.Get(url)
 	if err != nil {
 		return nil, err
 	}
-	defer file.Close()
+	defer resp.Body.Close()
 
-	reader := csv.NewReader(file)
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("failed to fetch CSV: %v", resp.Status)
+	}
+
+	reader := csv.NewReader(resp.Body)
 	records, err := reader.ReadAll()
 	if err != nil {
 		return nil, err
@@ -81,8 +84,9 @@ func searchFoodTrucks(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	url := "https://data.sfgov.org/api/views/rqzj-sfat/rows.csv"
 	var err error
-	foodTrucks, err = loadCSV("rows.csv")
+	foodTrucks, err = loadCSVFromURL(url)
 	if err != nil {
 		fmt.Printf("Error loading CSV file: %v\n", err)
 		return
