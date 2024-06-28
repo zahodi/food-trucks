@@ -30,7 +30,7 @@ cd foodtruck-api
 
 ## Running the Application Locally
 
-# Run the application:
+1. Run the application:
 
 ```sh
 
@@ -38,7 +38,7 @@ go run main.go
 ```
 
 
-Access the API:
+2. Access the API:
 
 List all food trucks: http://localhost:8000/foodtrucks
 
