@@ -16,7 +16,7 @@ This Go project serves an API that provides information about food trucks in San
 
 ## Prerequisites
 
-- [Go](https://golang.org/dl/) (version 1.18 or later)
+- [Go](https://golang.org/dl/) (version 1.22 or later)
 - [Docker](https://www.docker.com/get-started) (optional, for containerization)
 
 ## Installation
@@ -43,3 +43,19 @@ go run main.go
 List all food trucks: http://localhost:8000/foodtrucks
 
 Search food trucks by food type: http://localhost:8000/foodtrucks/search?food=burger
+
+## Running the Application with Docker
+
+1. Build the Docker image:
+
+```sh
+
+docker build -t foodtruck-api .
+```
+
+2. Run the Docker container:
+
+```sh
+
+docker run -p 8000:8000 foodtruck-api
+```
