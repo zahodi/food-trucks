@@ -24,8 +24,8 @@ This Go project serves an API that provides information about food trucks in San
 1. Clone the repository:
 
 ```sh
-git clone https://github.com/yourusername/foodtruck-api.git
-cd foodtruck-api
+git clone https://github.com/yourusername/foodtrucks-api.git
+cd foodtrucks-api
 ```
 
 ## Running the Application Locally
@@ -50,12 +50,12 @@ Search food trucks by food type: http://localhost:8000/foodtrucks/search?food=bu
 
 ```sh
 
-docker build -t foodtruck-api .
+docker build -t foodtrucks-api .
 ```
 
 2. Run the Docker container:
 
 ```sh
 
-docker run -p 8000:8000 foodtruck-api
+docker run -p 8000:8000 foodtrucks-api
 ```
