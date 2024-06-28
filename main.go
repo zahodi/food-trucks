@@ -33,7 +33,12 @@ func loadCSVFromURL(url string) ([]map[string]string, error) {
 		return nil, fmt.Errorf("CSV file is empty")
 	}
 
-	headers := records[0]
+	var headers []string
+	// convert headers to lowercase
+	for _, i := range records[0] {
+		headers = append(headers, strings.ToLower(i))
+	}
+
 	var foodTrucks []map[string]string
 	for _, record := range records[1:] {
 		foodTruck := make(map[string]string)
@@ -60,16 +65,15 @@ func searchFoodTrucks(w http.ResponseWriter, r *http.Request) {
 	}
 
 	uniqueApplicants := make(map[string]bool)
-	// var result []map[string]string
 	var result []string
 
 	for _, truck := range foodTrucks {
-		foodItems := truck["FoodItems"] // or use the dynamic column name if it's different
+		foodItems := truck["fooditems"]
 		if strings.Contains(strings.ToLower(foodItems), strings.ToLower(query)) {
-			applicant := truck["Applicant"] // or use the dynamic column name if it's different
+			applicant := truck["applicant"]
 			if _, exists := uniqueApplicants[applicant]; !exists {
 				uniqueApplicants[applicant] = true
-				result = append(result, truck["Applicant"])
+				result = append(result, truck["applicant"])
 			}
 		}
 	}

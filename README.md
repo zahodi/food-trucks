@@ -59,3 +59,11 @@ docker build -t foodtrucks-api .
 
 docker run -p 8000:8000 foodtrucks-api
 ```
+
+## Testing
+
+1. Run the tests:
+
+```sh
+go test -v
+```
